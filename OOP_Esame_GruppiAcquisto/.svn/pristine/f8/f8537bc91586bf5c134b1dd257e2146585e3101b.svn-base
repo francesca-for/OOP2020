@@ -1,0 +1,28 @@
+package groups;
+
+import java.util.List;
+
+public class Group {
+	private String name;
+	private String productName;
+	private List<String> customerNames;
+
+	public Group(String name, String productName, List<String> customers) {
+		this.name = name;
+		this.productName = productName;
+		this.customerNames = customers;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public List<String> getCustomerNames() {
+		return customerNames;
+	}
+	
+}

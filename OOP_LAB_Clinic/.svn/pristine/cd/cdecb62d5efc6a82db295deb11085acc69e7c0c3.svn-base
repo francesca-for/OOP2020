@@ -1,0 +1,60 @@
+package clinic;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Doctor {
+	private String first;
+	private String last;
+	private String ssn;
+	private int docID;
+	private String specialization;
+	
+	private Map<String, Patient> patients = new HashMap<>(); 
+
+	public Doctor(String first, String last, String ssn, int docID, String specialization) {
+		this.first = first;
+		this.last = last;
+		 this.ssn = ssn;
+		 this.docID = docID;
+		 this.specialization = specialization;
+	}
+
+	@Override
+	public String toString() {
+		return first + " " + last + " (" + ssn + ") [" + docID + "]: " + specialization;
+	}
+	
+	public void addNewPatient(Patient patient) {
+		patients.put(patient.getSsn(), patient);
+	}
+
+	public int getDocID() {
+		return docID;
+		
+	}
+	
+	public String getFirst() {
+		return first;
+	}
+
+	public String getLast() {
+		return last;
+	}
+	
+//	public String getSsn() {
+//		return ssn;
+//	}
+
+//	public String getSpecialization() {
+//		return specialization;
+//	}
+
+	public Collection getPatients() {
+		Collection<Patient> res =  patients.values();
+		return res;
+		
+	}
+	
+}

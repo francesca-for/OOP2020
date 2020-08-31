@@ -1,0 +1,47 @@
+package groups;
+
+import java.util.LinkedList;
+import java.util.List;
+
+public class Group {
+	private String name;
+	private String productName;
+	private List<String> customerNames;
+	private List<Supplier> groupSuppliers = new LinkedList<>();
+	private List<Bid> bids = new LinkedList<>();
+
+	public Group(String name, String productName, List<String> customers) {
+		this.name = name;
+		this.productName = productName;
+		this.customerNames = customers;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public List<String> getCustomerNames() {
+		return customerNames;
+	}
+
+	public List<Supplier> getGroupSuppliers() {
+		return groupSuppliers;
+	}
+
+	public void setGroupSuppliers(List<Supplier> groupSupp) {
+		groupSuppliers = groupSupp;
+	}
+
+	public void createNewBid(Bid bid) {
+		bids.add(bid);
+	}
+
+	public List<Bid> getBids() {
+		return bids;
+	}
+	
+}

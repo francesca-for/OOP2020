@@ -1,0 +1,143 @@
+package it.polito.oop.futsal;
+
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import it.polito.oop.milliways.Hall;
+
+/**
+ * Represents a infrastructure with a set of playgrounds, it allows teams
+ * to book, use, and  leave fields.
+ *
+ */
+public class Fields {
+	private int numFields = 0;
+	private int numAssociate = 0;
+	private String openingH;
+	private String closingH;
+	private Map<Integer, Field> fields = new HashMap<>();
+	private Map<Integer, Associate> associateMembers = new HashMap<>();
+	private List<Booking> bookings = new LinkedList<>();
+    
+    public static class Features {
+        public final boolean indoor; // otherwise outdoor
+        public final boolean heating;
+        public final boolean ac;
+        public Features(boolean i, boolean h, boolean a) {
+            this.indoor=i; this.heating=h; this.ac = a;
+        }
+    }
+    
+    public void defineFields(Features... features) throws FutsalException {
+        for(Features f : features) {
+        	if(f.indoor==false && (f.ac==true || f.heating==true)) throw new FutsalException();
+        	Field field = new Field(++numFields, f);
+        	fields.put(numFields, field);
+        }
+    }
+    
+    public long countFields() {
+        return numFields;
+    }
+
+    public long countIndoor() {
+        return fields.values().stream().filter(x -> x.getFeatures().indoor==true).count();
+    }
+    
+    public String getOpeningTime() {
+        return openingH;
+    }
+    
+    public void setOpeningTime(String time) {
+    	this.openingH = time;
+    }
+    
+    public String getClosingTime() {
+        return closingH;
+    }
+    
+    public void setClosingTime(String time) {
+    	this.closingH = closingH;
+    }
+    
+    public int newAssociate(String first, String last, String mobile) {
+    	Associate a = new Associate(++numAssociate, first, last, mobile);
+    	associateMembers.put(numAssociate, a);
+        return numAssociate;
+    }
+    
+    public String getFirst(int partyId) throws FutsalException {
+    	if(!associateMembers.containsKey(partyId)) throw new FutsalException();
+        return associateMembers.get(partyId).getFirst();
+    }
+    
+    public String getLast(int associate) throws FutsalException {
+    	if(!associateMembers.containsKey(associate)) throw new FutsalException();
+    	return associateMembers.get(associate).getLast();
+    }
+    
+    public String getPhone(int associate) throws FutsalException {
+    	if(!associateMembers.containsKey(associate)) throw new FutsalException();
+    	return associateMembers.get(associate).getMobile();
+    }
+    
+    public int countAssociates() {
+        return this.numAssociate;
+    }
+    
+    public void bookField(int field, int associate, String time) throws FutsalException {
+    	if(!associateMembers.containsKey(associate) || !fields.containsKey(field) ||
+    			time.compareTo(openingH)>0 || time.compareTo(closingH)<0 ||
+    			time.split(":")[1]!=openingH.split(":")[1]) throw new FutsalException();
+    	if(!isBooked(field, time)) {
+    		Booking b = new Booking(field, associate, time);
+    		bookings.add(b);
+    		fields.get(field).addNewBooking();
+    	}
+    	else System.out.println("Field " + field + " is alredy booked!");
+    }
+
+    public boolean isBooked(int field, String time) {
+        if(bookings.stream().filter(x -> x.getFieldID()==field && x.getTime().equals(time)).findFirst().orElse(null)!=null)
+        	return true;
+        return false;
+    }
+
+    public int getOccupation(int field) {
+        return (int)bookings.stream().filter(x -> x.getFieldID()==field).count();
+        
+    }
+    
+    public List<FieldOption> findOptions(String time, Features required){
+    	
+        return null;
+    }
+    
+    public long countServedAssociates() {
+        return bookings.stream().map(x -> x.getAssociateID()).distinct().count();
+    }
+    
+    // fieldTurnover() restituisce una mappa che riporta come chiavi i numeri dei campi e come
+    // valori il numero di prenotazioni presso tali campi.
+    public Map<Integer,Long> fieldTurnover() {
+//    	return fields.values().stream().collect(Collectors.toMap(Field::getField, (long) Field::getNumBooking));
+    	return null;
+    }
+    
+    public double occupation() {
+    	int totHours = Integer.parseInt(closingH.split(":")[0]) - Integer.parseInt(openingH.split(":")[0]);
+    	if(Integer.parseInt(closingH.split(":")[1]) < Integer.parseInt(openingH.split(":")[1]))
+    		totHours--;
+        return (double) bookings.stream().count()/totHours;
+    }
+    
+}

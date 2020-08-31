@@ -1,0 +1,15 @@
+package groups;
+
+public class Supplier {
+	private String name;
+	
+
+	public Supplier(String s) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+	
+}

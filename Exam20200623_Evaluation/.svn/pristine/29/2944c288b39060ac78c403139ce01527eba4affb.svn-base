@@ -1,0 +1,245 @@
+package evaluation;
+import java.util.*;
+import java.util.stream.Collectors;
+
+
+/**
+ * Facade class for the research evaluation system
+ *
+ */
+public class Evaluations {
+	private Map<Integer,Level> levels = new HashMap<>();
+	private Map<String,Journal> journals = new HashMap<>();
+	private Map<String,Group> groups = new HashMap<>();
+	private List<String> disciplines = new LinkedList<>();
+	private Map<String,Paper> papers = new HashMap<>();
+	private Map<String,Member> members = new HashMap<>();
+	
+
+    //R1
+    /**
+     * Define number of levels and relative points.
+     * 
+     * Levels are numbered from 1 on, and points must be strictly decreasing
+     *  
+     * @param points points for the levels
+     * @throws EvaluationsException thrown if points are not decreasing
+     */
+    public void addPointsForLevels (int... points) throws EvaluationsException {
+    	for(int i = 1; i<points.length; i++)
+    		if(points[i]>=points[i-1]) throw new EvaluationsException();
+    	int numL=1;
+    	for(int p : points) {
+    		Level l = new Level(p);
+    		levels.put(numL, l);
+    		numL++;
+    	}
+    		
+    }
+
+    /**
+     * Retrieves the points for the given level.
+     * 
+     * @param level level for which points are required
+     * @return points for the level
+     */
+    public int getPointsOfLevel (int level) {
+        return levels.get(level).getPoints();
+    }
+
+    /**
+     * Add a new journal for a given disciplines and provides the corresponding level.
+     * 
+     * The level determines the points for the article published in the journal.
+     * 
+     * @param name name of the new journal
+     * @param discipline reference discipline for the journal
+     * @param level level for the journal.
+     * @throws EvaluationsException thrown if the specified level does not exist
+     */
+    public void addJournal (String name, String discipline, int level) throws EvaluationsException {
+    	if(!levels.containsKey(level)) throw new EvaluationsException();
+    	Journal j = new Journal(name, discipline, levels.get(level).getPoints());
+    	if(!disciplines.contains(discipline))
+    		disciplines.add(discipline);
+    	journals.put(name, j);
+    	levels.get(level).addJournal(j);
+    }
+
+    /**
+     * Retrieves number of journals.
+     * 
+     * @return journals count
+     */
+    public int countJournals() {
+        return (int)journals.values().stream().count();
+    }
+
+    /**
+     * Retrieves all the journals for a given discipline.
+     * 
+     * @param discipline the required discipline
+     * @return list of journals (sorted alphabetically)
+     */
+    public List<String> getJournalNamesOfAGivenDiscipline(String discipline) {
+    	Comparator<Journal> cmp = Comparator.comparing(Journal::getName);
+    	return journals.values().stream().filter(x -> x.getDiscipline().equals(discipline)).sorted(cmp).map(x -> x.getName()).collect(Collectors.toList());
+    }
+
+    //R2
+    /**
+     * Add a research group and the relative disciplines.
+     * 
+     * @param name name of the research group
+     * @param disciplines list of disciplines
+     * @throws EvaluationsException thrown in case of duplicate name
+     */
+    public void addGroup (String name, String... disciplines) throws EvaluationsException {
+    	if(groups.containsKey(name)) throw new EvaluationsException();
+    	Group g = new Group(name,disciplines);
+    	groups.put(name, g);
+    }
+
+    /**
+     * Define the members for a previously defined research group.
+     * 
+     * @param groupName name of the group
+     * @param memberNames list of group members
+     * @throws EvaluationsException thrown if name not previously defined.
+     */
+    public void setMembers (String groupName, String... memberNames) throws EvaluationsException {
+    	if(!groups.containsKey(groupName)) throw new EvaluationsException();
+    	for(String m : memberNames) {
+    		Member member = new Member(m);
+    		members.put(m, member);
+    		groups.get(groupName).addMember(member);
+    	}
+    }
+
+    /**
+     * Return list of members of a group.
+     * The list is sorted alphabetically.
+     * 
+     * @param groupName name of the group
+     * @return list of members
+     */
+    public List<String >getMembers(String groupName){
+    	List<String> res = new LinkedList<>();
+    	if(!groups.containsKey(groupName))
+    		return res; 
+        return groups.get(groupName).getMembers();
+    }
+
+    /**
+     * Retrieves the group names working on a given discipline
+     * 
+     * @param discipline the discipline of interest
+     * @return list of group names sorted alphabetically
+     */
+    public List<String> getGroupNamesOfAGivenDiscipline(String discipline) {
+    	List<String> res = new LinkedList<>();
+    	if(!disciplines.contains(discipline))
+    		return res;
+    	return groups.values().stream().filter(x -> x.getDisciplines().contains(discipline)).map(x -> x.getName()).sorted().collect(Collectors.toList());
+    }
+
+    //R3
+    /**
+     * Add a new journal articles, with a given title and the list of authors.
+     * 
+     * The journal must have been previously defined.
+     * 
+     * The authors (at least one) are members of research groups.
+     * 
+     * @param title title of the article
+     * @param journalName name of the journal
+     * @param authorNames list of authors
+     * @throws EvaluationsException thrown if journal not defined or no author provided
+     */
+    public void addPaper (String title, String journalName, String... authorNames) throws EvaluationsException {
+    	if(!journals.containsKey(journalName) || authorNames==null)  throw new EvaluationsException();
+    	Paper p = new Paper(title, journalName, authorNames);
+    	papers.put(title, p);
+    	for(String a: authorNames)
+    		members.get(a).addPaper(p);
+    	journals.get(journalName).addPaper(p);
+    }
+
+
+    /**
+     * Retrieves the titles of the articles authored by a member of a research group
+     * 
+     * @param memberName name of the group member
+     * @return list of titles sorted alphabetically
+     */
+    public List<String> getTitlesOfAGivenAuthor (String memberName) {
+    	return papers.values().stream().filter(x -> x.getAuthors().contains(memberName)).map(x -> x.getTitle()).sorted().collect(Collectors.toList());
+    }
+
+
+    //R4
+    /**
+     * Returns the points for a given group member.
+     * 
+     * Points are collected for each article the member authored.
+     * The points are those corresponding to the level of the
+     * journal where the article is published, divided by
+     * the total number of authors.
+     * 
+     * The total points are eventually rounded to the closest integer.
+     * 
+     * @param memberName name of the group member
+     * @return total points
+     */
+    public int getPointsOfAGivenAuthor (String memberName) {
+    	List<Paper> papersOfAuthor = members.get(memberName).getPapers();
+    	float score = 0;
+    	for(Paper p : papersOfAuthor) {
+    		float scorePart = (float)journals.values().stream().filter(x -> x.getPapers().containsValue(p)).collect(Collectors.toList()).get(0).getScore();
+    		scorePart = (float)scorePart/p.getAuthors().size();
+    		score += scorePart;
+    	}
+        return Math.round(score);
+    }
+
+    /**
+     * Computes the total points collected by all members of all groups
+     *  
+     * @return the total points
+     */
+    public int evaluate() {
+    	int score = 0;
+    	for(Paper p : papers.values()) {
+    		score += journals.get(p.getJournalName()).getScore();
+    	}
+        return score;
+    }
+
+
+    //R5 Statistiche
+    /**
+     * For each group return the total points collected
+     * by all the members of each research group.
+     * 
+     * Group names are sorted alphabetically.
+     * 
+     * @return the map associating group name to points
+     */
+    public SortedMap<String, Integer> pointsForGroup() {
+        return null;
+    }
+
+    /**
+     * For each amount of points returns a list of
+     * the authors (group members) that achieved such score.
+     * 
+     * Points are sorted in decreasing order.
+     * 
+     * @return the map linking the number of point to the list of authors
+     */
+    public SortedMap<Integer, List<String>> getAuthorNamesPerPoints () {
+        return null;
+    }
+
+
+}

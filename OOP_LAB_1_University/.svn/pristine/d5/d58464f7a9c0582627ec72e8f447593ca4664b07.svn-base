@@ -1,0 +1,75 @@
+package university;
+
+import java.util.logging.Logger;
+
+public class UniversityExt extends University {
+	
+	private final static Logger logger = Logger.getLogger("University");
+	private static final String SEPARATOR = " ";
+	Students students[] = getStudents();
+	Courses courses[] = getCourses();
+
+	public UniversityExt(String name) {
+		super(name);
+		// Example of logging
+		logger.info("Creating extended university object");
+	}
+	
+	public void exam(int studentId, int courseID, int grade) {
+		if(studentId<FIRST_ID || studentId>getNumStud()+FIRST_ID) {
+			System.out.println("Matricola non esistente");
+			return;
+		}
+
+		if(courseID<FIRST_C_CODE || courseID>getNumCourses()+FIRST_C_CODE) {
+			System.out.println("Corso non esistente");
+			return;
+		}
+
+		if(grade<0 || grade>100) {
+			System.out.println("Errore: il voto deve essere compreso tra 0-100");
+			return;
+		}
+
+		students[studentId-FIRST_ID].setGrade(courseID, grade);
+		courses[courseID-FIRST_C_CODE].setGrade(studentId, grade);
+		
+		logger.info("Student " + studentId + " took an exam in course " + courseID + " with grade " + grade);
+
+	}
+
+	public String studentAvg(int studentId) {
+		float avg = students[studentId-FIRST_ID].avgGrade();
+		if(avg==-1)
+			return "Student " + studentId + " hasn't taken any exams";
+		return "Student " + studentId + ": " + avg;
+	}
+	
+	public String courseAvg(int courseId) {
+		float avg = courses[courseId-FIRST_C_CODE].avgGrade();
+		if(avg==-1)
+			return "No student has taken the exam in " + courses[courseId-FIRST_C_CODE].getTitle();
+		return "The average for the course " + courses[courseId-FIRST_C_CODE].getTitle() + " is: " + avg;
+	}
+	
+	public String topThreeStudents() {
+		StringBuffer res = new StringBuffer();
+		Students[] topStudents = new Students[getNumStud()];
+		Students temp;
+		topStudents=students;
+		
+		for(int i=0; i<3; i++) {
+			for(int j=i; j<getNumStud(); j++) {
+				if(topStudents[j].getScore() > topStudents[i].getScore()) {
+					temp = topStudents[i];
+					topStudents[i] = topStudents[j];
+					topStudents[j] = temp;
+				}
+			}
+		}
+		
+		for(int i=0; i<3 && i<getNumStud(); i++)
+			res.append(topStudents[i].getFirst()).append(SEPARATOR).append(topStudents[i].getLast()).append(SEPARATOR).append(topStudents[i].getScore()).append("\n");
+		return res.toString().substring(0, res.length()-1);
+	}
+}

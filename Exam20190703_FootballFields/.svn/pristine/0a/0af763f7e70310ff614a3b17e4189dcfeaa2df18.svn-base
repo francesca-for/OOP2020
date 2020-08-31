@@ -1,0 +1,30 @@
+package it.polito.oop.futsal;
+
+import it.polito.oop.futsal.Fields.Features;
+
+public class Field implements FieldOption{
+	private int FieldID;
+	private Features features;
+	
+	public Field(int numField, Features f) {
+		this.FieldID = numField;
+		this.features = f;
+	}
+	
+	public Features getFeatures() {
+		return features;
+	}
+
+	@Override
+	public int getField() {
+		return FieldID;
+	}
+
+
+	@Override
+	public int getOccupation() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

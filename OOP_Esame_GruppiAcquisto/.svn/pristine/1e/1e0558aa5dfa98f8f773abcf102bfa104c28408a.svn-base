@@ -1,0 +1,96 @@
+package groups;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.stream.Collectors;
+
+
+public class GroupHandling {
+	private Map<String, Product> products = new HashMap<>();
+	private Map<String, Group> groups = new HashMap<>();
+	
+//R1	
+	public void addProduct (String productTypeName, String... supplierNames) 
+			throws GroupHandlingException {
+		if(!products.containsKey(productTypeName)) throw new GroupHandlingException();
+		
+		List<String> suppliers = new LinkedList<>();
+		for(String s : supplierNames) {
+			if(s==null)
+				break;
+			suppliers.add(s);
+		}
+		Product p = new Product(productTypeName, suppliers);
+		products.put(productTypeName, p);
+	}
+	
+	public List<String> getProductTypes (String supplierName) {
+		Comparator<Product> cmp = Comparator.comparing(Product::getProductTypeName);
+		return products.values().stream().filter(x -> x.getSuppliers().contains(supplierName)).sorted(cmp).map(x -> x.getProductTypeName()).collect(Collectors.toList());
+	}
+	
+//R2	
+	public void addGroup (String name, String productName, String... customerNames) 
+			throws GroupHandlingException {
+		if(!groups.containsKey(name)) throw new GroupHandlingException();
+		
+		List<String> customers = new LinkedList<>();
+		for(String c : customerNames) {
+			if(c==null)
+				break;
+			customers.add(c);
+		}
+		Group g = new Group(name, productName, customers);
+		groups.put(name, g);
+	}
+	
+	public List<String> getGroups (String customerName) {
+		Comparator<Group> cmp = Comparator.comparing(Group::getName);
+		return groups.values().stream().filter(x -> x.getCustomerNames().contains(customerName)).sorted(cmp).map(x -> x.getName()).collect(Collectors.toList());
+	}
+
+//R3
+	public void setSuppliers (String groupName, String... supplierNames)
+			throws GroupHandlingException {
+		//TODO
+	}
+	
+	public void addBid (String groupName, String supplierName, int price)
+			throws GroupHandlingException {
+	}
+	
+	public String getBids (String groupName) {
+        return null;
+	}
+	
+	
+//R4	
+	public void vote (String groupName, String customerName, String supplierName)
+			throws GroupHandlingException {
+	}
+	
+	public String  getVotes (String groupName) {
+        return null;
+	}
+	
+	public String getWinningBid (String groupName) {
+        return null;
+	}
+	
+//R5
+	public SortedMap<String, Integer> maxPricePerProductType() { //serve toMap
+        return null;
+	}
+	
+	public SortedMap<Integer, List<String>> suppliersPerNumberOfBids() {
+        return null;
+	}
+	
+	public SortedMap<String, Long> numberOfCustomersPerProductType() {
+        return null;
+	}
+	
+}

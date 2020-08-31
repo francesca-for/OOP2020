@@ -1,0 +1,26 @@
+
+Alice, Green, ALCGRN
+Robert, Smith, RBTSMT
+Steve, Moore, STVMRE
+Susan, Madison, SSNMDS
+
+George, Sun, SNUGRG, 14, Physician
+Kate, Love, LVOKTA, 86, Physician
+
+
+SSNMDS, 86
+ALCGRN, 14
+RBTSMT, 14
+STVMRE, 14
+
+P;Sara; COGNOME;COD
+P;Claudia;Smith; CLDSMT
+M; Marco; Moore; MRCMRE
+P;George ;Yellow;GRGYLL
+M;Susan; Orange;SSNORN
+M;Steve ;Blue ; STVBLE
+P;Robert; Grey;RBTGRY
+P;Alice;  Green; ALCGRN
+P;Kate;Red ; KTERED
+P;Andrew; White;ANRWHT
+P;Diana; Black ; DNABLK

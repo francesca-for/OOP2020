@@ -1,0 +1,25 @@
+package groups;
+
+public class Bid {
+	private Supplier supplier;
+	private int price;
+	
+	public Bid(Supplier supplier, int price) {
+		this.price = price;
+		this.supplier = supplier;
+	}
+
+	public Supplier getSupplier() {
+		return supplier;
+	}
+
+	public int getPrice() {
+		return price;
+	}
+
+	@Override
+	public String toString() {
+		return supplier + ":" + price;
+	}
+	
+}

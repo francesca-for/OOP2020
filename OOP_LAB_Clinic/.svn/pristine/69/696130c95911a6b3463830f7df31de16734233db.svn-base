@@ -1,0 +1,30 @@
+		NOTE UTILI
+		
+* PER ORDINARE ENTRATE DI UNA MAPPA posso lavorare con entrySet
+   (coppia key-value) e poi creare un comparatore
+   List<Map.Entry<String, Integer>> entries = new LinkedList<>(mapName.entrySet());
+   --------  ^ da mappa a lista ---------
+  
+* COMPARATORI :
+   - Comparator<Class/Type> cmp = Comparator.comparing(Class::getSomethingToCompare)
+  				.thenComparing(Doctor::getSomethingElse);  // eventualmente come seconda chiave di ordinamento
+   - Comparator<Class/Type> cmp = ( (Elem a, Elem b) -> {
+  				lambdaExpression; return resDelConfronto; });
+  				
+* RAGGRUPPARE PER UNA DATO ATTRIBUTO
+   Map<String, Integer> patientsForSpecialization = doctors.values().stream()
+                .collect(Collectors.groupingBy(Doctor::getSpecialization,
+                			Collectors.summingInt(x -> x.getNumPatients())));
+   --------  ^ da lista a mappa ---------
+    
+* FUNZIONE DI MAPPING (stream)
+	funzione map(Function<T, R>) degli stream
+	dato un elemento dello stream posso calcolare un nuovo elemento che verrà messo in un altro stream
+	posso quindi ad es. passare da stream di persone a stream di stringhe (codici fiscali)
+	->  persone.stream().map( p -> p.getSsn)
+  
+* (ES. lab Clinic)
+	Doctor può essere anche paziente => comodo trattarlo come Doctor extends Patient
+	in questo modo può essere aggiunto alla lista dei pazienti
+	
+* 

@@ -1,0 +1,45 @@
+package university;
+
+ public class Students {
+	private static final String SEPARATOR = " ";
+	private static final int MAX_C_PER_STUD = 25;
+	
+	private String first;
+	private String last;
+	private int studID;
+	private int numCourses=0;
+	private Courses[] courses = new Courses[MAX_C_PER_STUD];
+	
+	public Students(String first, String last, int studID){
+		this.first=first;
+		this.last=last;
+		this.studID=studID;
+	}
+	
+	public int getStudID() {
+		return studID;
+	}
+	
+	public void add(Courses course) {
+		if(numCourses>=MAX_C_PER_STUD)
+			System.out.println("Impossibile iscrivere nuovo studente al corso "+course.getCode());
+		courses[numCourses]=course;
+		numCourses++;
+	}
+
+	public String coursesList(){
+		StringBuffer res = new StringBuffer();
+		for(Courses c : courses) {
+			if(c==null)
+				break;
+			res.append(c.toString()).append("\n");
+		}
+		return res.toString().substring(0, res.length()-1);
+	}
+	
+	@Override
+	public String toString() {
+		return studID + SEPARATOR + first + SEPARATOR + last;
+	}
+	
+}

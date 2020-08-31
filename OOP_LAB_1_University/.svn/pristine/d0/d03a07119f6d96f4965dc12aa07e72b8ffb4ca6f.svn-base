@@ -1,0 +1,70 @@
+//import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+//import java.util.logging.FileHandler;
+//import java.util.logging.LogManager;
+//import java.util.logging.Logger;	// unused
+
+import university.*;
+
+public class ExampleAppExt {
+	
+	public static void main(String[] args) throws SecurityException, FileNotFoundException, IOException {
+		
+		String universityName = "Politecnico di Torino";
+		
+		UniversityExt poli = new UniversityExt(universityName);
+		
+		poli.setRector("Guido", "Saracco");
+		
+		System.out.println("Rector of " + poli.getName() + " : " + poli.getRector()); // Guido Saracco
+		
+		int s1 = poli.enroll("Mario","Rossi");
+		int s2 = poli.enroll("Giuseppe","Verdi");
+		int s3 = poli.enroll("Luca","Bianchi");
+		int s4 = poli.enroll("Alessandro","Neri");
+		
+		System.out.println("Enrolled students " + s1 + ", " + s2 + ", " + s3 + ", " + s4); // 10000, 10001, 10002, 100033
+		System.out.println("s1 = " + poli.student(s1)); // 10000 Mario Rossi
+		System.out.println("s4 = " + poli.student(s4)); // 10003 Alessandro Neri
+		
+		int macro = poli.activate("Macro Economics", "Paul Krugman");
+		int oop = poli.activate("Object Oriented Programming", "James Gosling");
+		
+		System.out.println("Activated courses " + macro + " and " + oop); // 10 and 11
+		poli.register(s1, macro);
+		poli.register(s2, macro);
+		poli.register(s2, oop);
+		poli.register(s3, oop);
+		poli.register(s3, macro);
+		poli.register(s4, macro);
+		poli.register(s4, oop);
+		
+		System.out.println("Course: "+poli.course(9)); //Codice corso non esistente
+		System.out.println("Course: "+poli.course(11)); //11,Object Oriented Programming,James Gosling
+		
+		System.out.println(poli.listAttendees(macro));
+		// 10000 Mario Rossi
+		// 10001 Giuseppe Verdi
+		// 10000 Mario Rossi
+		// 10003 Alessandro Neri
+		
+		System.out.println(poli.studyPlan(s2));
+		// 10,Macro Economics,Paul Krugman
+		// 11,Object Oriented Programming,Marco Torchiano
+		
+		poli.exam(s1, macro, 27);
+		poli.exam(s2, macro, 30);
+		poli.exam(s2, oop, 26);
+		poli.exam(s3, oop, 23);
+		poli.exam(s4, oop, 28);
+		poli.exam(s4, macro, 19);
+		
+		System.out.println(poli.studentAvg(s2)); // 28.0
+		System.out.println(poli.studentAvg(s4)); // 23.5
+		
+		System.out.println(poli.courseAvg(macro)); 
+		
+		System.out.println("Best students:\n" + poli.topThreeStudents());
+	}
+}

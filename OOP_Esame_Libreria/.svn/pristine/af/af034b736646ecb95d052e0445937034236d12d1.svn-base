@@ -1,0 +1,41 @@
+package libreria;
+
+public class Ordine {
+	private Libro libro;
+	private int quantitaRiordino;
+	boolean consegnato = false;
+	private int numeroOrdine;
+	private Libreria libreria;
+
+    public Ordine(Libreria libreria, Libro libro, int quantitaRiordino) {
+    	this.libreria = libreria;
+		this.libro = libro;
+		this.quantitaRiordino = quantitaRiordino;
+		this.numeroOrdine = libreria.getIdOrdine();
+		libreria.nextIdOrdine();
+	}
+
+	public Editore getEditore(){
+        return libro.getEditore();
+    }
+    
+    public Libro getLibro(){
+        return libro;
+    }
+    
+    public int getQuantita(){
+        return quantitaRiordino;
+    }
+
+    public boolean isConsegnato(){
+        return consegnato;
+    }
+    
+    public void setIsConsegnato(boolean consegnato){
+        this.consegnato = consegnato;
+    }
+
+    public int getNumero(){
+        return numeroOrdine;
+    }
+}
